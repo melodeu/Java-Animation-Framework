@@ -4,6 +4,19 @@ This document provides a guide to the animation framework, its features, and API
 
 ---
 
+**Note:** This library was made for **Java 21**.
+
+**Note:** This library requires the following dependency:
+```xml
+<dependency>
+    <groupId>it.unimi.dsi</groupId>
+    <artifactId>fastutil</artifactId>
+    <version>8.5.16</version>
+</dependency>
+```
+
+---
+
 ## Table of Contents
 
 - [Overview](#1-overview)  
@@ -255,8 +268,7 @@ Animator.tween(myObject::setPosition, vectorInterpolator, startPosition, endPosi
 
 ### 7.2. Easing Functions
 Easing modifies the rate of an animation to produce more natural-looking motion.  
-Apply an easing function via the `.ease()` method. The `EasingType` enum provides a large collection of industry-standard functions (e.g., `SINE_IN_OUT`, `ELASTIC_OUT`).  
-For fully custom curves, `BezierEasing` can be used.
+Apply an easing function via the `.ease()` method. The `EasingType` enum provides a large collection of industry-standard functions (e.g., `SINE_IN_OUT`, `ELASTIC_OUT`).
 
 ## 8. API Quick Reference
 
