@@ -20,6 +20,7 @@ public class Spring extends Animation<Spring> {
     private final float stiffness;
     private final float damping;
     private static final float TOLERANCE = 0.001f;
+    private float lastTime = 0f;
 
     public Spring(Consumer<Float> targetSetter, float initialValue, float stiffness, float damping) {
         this.targetSetter = targetSetter;
@@ -36,12 +37,15 @@ public class Spring extends Animation<Spring> {
 
     @Override
     protected void doUpdate(float timeSinceDelayed) {
-        var force = this.stiffness * (this.targetValue - this.value);
-        var dampingForce = this.damping * this.velocity;
-        var acceleration = force - dampingForce;
+        float dt = timeSinceDelayed - lastTime;
+        lastTime = timeSinceDelayed;
 
-        this.velocity += acceleration * (1.0f / 60.0f);
-        this.value += this.velocity * (1.0f / 60.0f);
+        float force = this.stiffness * (this.targetValue - this.value);
+        float dampingForce = this.damping * this.velocity;
+        float acceleration = force - dampingForce;
+
+        this.velocity += acceleration * dt;
+        this.value += this.velocity * dt;
 
         this.targetSetter.accept(this.value);
     }
