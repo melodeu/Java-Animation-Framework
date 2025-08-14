@@ -59,5 +59,6 @@ public class Spring extends Animation<Spring> {
     @Override
     protected void resetForRepeat() {
         this.elapsedTime = 0;
+        this.lastTime = 0f;
     }
 }
