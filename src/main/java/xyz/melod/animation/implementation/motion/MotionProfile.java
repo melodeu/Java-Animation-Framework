@@ -27,6 +27,10 @@ public class MotionProfile {
         this.maxVelocity = Math.abs(maxVelocity);
         this.maxAcceleration = Math.abs(maxAcceleration);
 
+        if (this.maxAcceleration <= 0 || this.maxVelocity <= 0) {
+            throw new IllegalArgumentException("maxAcceleration must be > 0 and maxVelocity must be > 0");
+        }
+
         var timeToReachMaxV = this.maxVelocity / this.maxAcceleration;
         var distanceToAccelerateAndDecelerate = this.maxAcceleration * timeToReachMaxV * timeToReachMaxV;
 
