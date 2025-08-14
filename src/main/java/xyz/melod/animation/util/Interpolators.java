@@ -6,7 +6,7 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.util;
+package xyz.melod.animation.util;
 
 @SuppressWarnings("unused")
 public final class Interpolators {

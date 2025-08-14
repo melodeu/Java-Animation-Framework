@@ -6,7 +6,7 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.implementation.motion;
+package xyz.melod.animation.implementation.motion;
 
 @SuppressWarnings("unused")
 public class MotionProfile {

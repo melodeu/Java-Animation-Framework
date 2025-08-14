@@ -6,7 +6,7 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.easing;
+package xyz.melod.animation.easing;
 
 import it.unimi.dsi.fastutil.doubles.DoubleUnaryOperator;
 

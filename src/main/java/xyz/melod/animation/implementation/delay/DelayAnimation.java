@@ -6,9 +6,9 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.implementation.delay;
+package xyz.melod.animation.implementation.delay;
 
-import animation.Animatable;
+import xyz.melod.animation.Animatable;
 
 @SuppressWarnings("unused")
 public class DelayAnimation implements Animatable {

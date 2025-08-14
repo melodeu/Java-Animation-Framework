@@ -6,11 +6,11 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.implementation.keyframe;
+package xyz.melod.animation.implementation.keyframe;
 
-import animation.Animation;
-import animation.easing.EasingFunction;
-import animation.easing.EasingType;
+import xyz.melod.animation.Animation;
+import xyz.melod.animation.easing.EasingFunction;
+import xyz.melod.animation.easing.EasingType;
 
 import java.util.NavigableMap;
 import java.util.TreeMap;

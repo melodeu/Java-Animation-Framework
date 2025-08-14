@@ -6,12 +6,12 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.implementation.tween;
+package xyz.melod.animation.implementation.tween;
 
-import animation.Animation;
-import animation.easing.EasingFunction;
-import animation.easing.EasingType;
-import animation.util.TypeInterpolator;
+import xyz.melod.animation.Animation;
+import xyz.melod.animation.easing.EasingFunction;
+import xyz.melod.animation.easing.EasingType;
+import xyz.melod.animation.util.TypeInterpolator;
 import java.util.function.Consumer;
 
 @SuppressWarnings({"unused", "FieldMayBeFinal"})

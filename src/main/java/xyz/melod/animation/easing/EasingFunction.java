@@ -6,9 +6,9 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.util;
+package xyz.melod.animation.easing;
 
 @FunctionalInterface
-public interface TypeInterpolator<T> {
-    T interpolate(T startValue, T endValue, float progress);
+public interface EasingFunction {
+    double apply(double progress);
 }

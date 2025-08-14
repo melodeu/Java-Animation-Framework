@@ -6,9 +6,9 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.implementation.chained;
+package xyz.melod.animation.implementation.chained;
 
-import animation.Animatable;
+import xyz.melod.animation.Animatable;
 
 import java.util.Arrays;
 import java.util.LinkedList;

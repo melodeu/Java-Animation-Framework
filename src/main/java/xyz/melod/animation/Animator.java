@@ -6,16 +6,16 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation;
+package xyz.melod.animation;
 
-import animation.implementation.delay.DelayAnimation;
-import animation.implementation.keyframe.KeyframeAnimation;
-import animation.implementation.motion.MotionProfileAnimation;
-import animation.implementation.parallel.ParallelAnimation;
-import animation.implementation.spring.Spring;
-import animation.implementation.tween.Tween;
-import animation.util.Interpolators;
-import animation.util.TypeInterpolator;
+import xyz.melod.animation.implementation.delay.DelayAnimation;
+import xyz.melod.animation.implementation.keyframe.KeyframeAnimation;
+import xyz.melod.animation.implementation.motion.MotionProfileAnimation;
+import xyz.melod.animation.implementation.parallel.ParallelAnimation;
+import xyz.melod.animation.implementation.spring.Spring;
+import xyz.melod.animation.implementation.tween.Tween;
+import xyz.melod.animation.util.Interpolators;
+import xyz.melod.animation.util.TypeInterpolator;
 import java.util.NavigableMap;
 import java.util.function.Consumer;
 

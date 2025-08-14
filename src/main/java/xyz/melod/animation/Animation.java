@@ -6,7 +6,7 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation;
+package xyz.melod.animation;
 
 import java.util.function.Consumer;
 

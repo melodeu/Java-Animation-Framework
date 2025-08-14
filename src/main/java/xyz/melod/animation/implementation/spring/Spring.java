@@ -6,9 +6,9 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.implementation.spring;
+package xyz.melod.animation.implementation.spring;
 
-import animation.Animation;
+import xyz.melod.animation.Animation;
 import java.util.function.Consumer;
 
 @SuppressWarnings("unused")

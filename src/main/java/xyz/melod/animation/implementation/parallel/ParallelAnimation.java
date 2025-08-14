@@ -6,9 +6,9 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation.implementation.parallel;
+package xyz.melod.animation.implementation.parallel;
 
-import animation.Animatable;
+import xyz.melod.animation.Animatable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

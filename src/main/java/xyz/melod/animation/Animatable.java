@@ -6,10 +6,10 @@
  * License: MIT
  * This code is free to use, modify, and distribute.
  */
-package animation;
+package xyz.melod.animation;
 
-import animation.implementation.chained.ChainedAnimation;
-import animation.implementation.parallel.ParallelAnimation;
+import xyz.melod.animation.implementation.chained.ChainedAnimation;
+import xyz.melod.animation.implementation.parallel.ParallelAnimation;
 
 @FunctionalInterface
 @SuppressWarnings("unused")

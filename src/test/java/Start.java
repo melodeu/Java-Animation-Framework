@@ -7,9 +7,9 @@
  * This code is free to use, modify, and distribute.
  */
 
-import animation.Animator;
-import animation.easing.EasingType;
-import animation.implementation.spring.Spring;
+import xyz.melod.animation.Animator;
+import xyz.melod.animation.easing.EasingType;
+import xyz.melod.animation.implementation.spring.Spring;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
