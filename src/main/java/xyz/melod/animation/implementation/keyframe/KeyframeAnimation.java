@@ -11,40 +11,49 @@ package xyz.melod.animation.implementation.keyframe;
 import xyz.melod.animation.Animation;
 import xyz.melod.animation.easing.EasingFunction;
 import xyz.melod.animation.easing.EasingType;
-
+import java.time.Duration;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class KeyframeAnimation extends Animation<KeyframeAnimation> {
     private final Consumer<Float> target;
-    private final NavigableMap<Float, Float> keyframes;
+    private final NavigableMap<Long, Float> keyframesNanos;
     private EasingFunction easing = EasingType.LINEAR;
-    private final float totalDuration;
+    private final long totalDurationNanos;
     private boolean isReversed = false;
 
-    public KeyframeAnimation(Consumer<Float> target, NavigableMap<Float, Float> keyframes) {
+    public KeyframeAnimation(Consumer<Float> target, NavigableMap<Duration, Float> keyframes) {
         this.target = target;
-        this.keyframes = new TreeMap<>(keyframes);
-        this.totalDuration = this.keyframes.isEmpty() ? 0 : this.keyframes.lastKey();
-        this.target.accept(this.keyframes.isEmpty() ? 0f : this.keyframes.firstEntry().getValue());
+        this.keyframesNanos = keyframes.entrySet().stream()
+                .collect(Collectors.toMap(
+                        e -> e.getKey().toNanos(),
+                        Map.Entry::getValue,
+                        (v1, v2) -> v2,
+                        TreeMap::new
+                ));
+
+        this.totalDurationNanos = this.keyframesNanos.isEmpty() ? 0 : this.keyframesNanos.lastKey();
+        this.target.accept(this.keyframesNanos.isEmpty() ? 0f : this.keyframesNanos.firstEntry().getValue());
     }
 
     @Override
-    protected void doUpdate(float timeSinceDelayed) {
-        if (this.totalDuration <= 0) return;
+    protected void doUpdate(long timeSinceDelayedNanos) {
+        if (this.totalDurationNanos <= 0) return;
 
-        float progressTime = Math.min(timeSinceDelayed, this.totalDuration);
+        long progressTime = Math.min(timeSinceDelayedNanos, this.totalDurationNanos);
         if (this.isReversed) {
-            progressTime = this.totalDuration - progressTime;
+            progressTime = this.totalDurationNanos - progressTime;
         }
 
-        var floorEntry = this.keyframes.floorEntry(progressTime);
-        var ceilingEntry = this.keyframes.ceilingEntry(progressTime);
+        var floorEntry = this.keyframesNanos.floorEntry(progressTime);
+        var ceilingEntry = this.keyframesNanos.ceilingEntry(progressTime);
 
-        if (floorEntry == null) floorEntry = this.keyframes.firstEntry();
-        if (ceilingEntry == null) ceilingEntry = this.keyframes.lastEntry();
+        if (floorEntry == null) floorEntry = this.keyframesNanos.firstEntry();
+        if (ceilingEntry == null) ceilingEntry = this.keyframesNanos.lastEntry();
 
         if (floorEntry.getKey().equals(ceilingEntry.getKey())) {
             this.target.accept(floorEntry.getValue());
@@ -67,12 +76,12 @@ public class KeyframeAnimation extends Animation<KeyframeAnimation> {
     @Override
     public boolean isFinished() {
         if (finished) return true;
-        return elapsedTime - delay >= totalDuration;
+        return elapsedNanos - delayNanos >= totalDurationNanos;
     }
 
     @Override
     protected void resetForRepeat() {
-        this.elapsedTime = 0;
+        super.resetForRepeat();
         if (this.yoyo) {
             this.isReversed = !this.isReversed;
         }

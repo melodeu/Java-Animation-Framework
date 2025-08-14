@@ -14,7 +14,7 @@ import xyz.melod.animation.implementation.parallel.ParallelAnimation;
 @FunctionalInterface
 @SuppressWarnings("unused")
 public interface Animatable {
-    void update(float deltaTime);
+    void update(long deltaNanos);
 
     default boolean isFinished() {
         return false;

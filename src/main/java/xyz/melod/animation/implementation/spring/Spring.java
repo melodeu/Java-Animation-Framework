@@ -20,7 +20,7 @@ public class Spring extends Animation<Spring> {
     private float stiffness;
     private float damping;
     private static final float TOLERANCE = 0.001f;
-    private float lastTime = 0f;
+    private long lastTimeNanos = 0L;
 
     public Spring(Consumer<Float> targetSetter, float initialValue, float stiffness, float damping) {
         this.targetSetter = targetSetter;
@@ -44,9 +44,9 @@ public class Spring extends Animation<Spring> {
     }
 
     @Override
-    protected void doUpdate(float timeSinceDelayed) {
-        float dt = timeSinceDelayed - lastTime;
-        lastTime = timeSinceDelayed;
+    protected void doUpdate(long timeSinceDelayedNanos) {
+        float dt = (timeSinceDelayedNanos - lastTimeNanos) / 1_000_000_000.0f;
+        lastTimeNanos = timeSinceDelayedNanos;
 
         float force = this.stiffness * (this.targetValue - this.value);
         float dampingForce = this.damping * this.velocity;
@@ -66,7 +66,7 @@ public class Spring extends Animation<Spring> {
 
     @Override
     protected void resetForRepeat() {
-        this.elapsedTime = 0;
-        this.lastTime = 0f;
+        super.resetForRepeat();
+        this.lastTimeNanos = 0L;
     }
 }

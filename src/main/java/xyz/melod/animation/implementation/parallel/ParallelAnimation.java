@@ -26,10 +26,10 @@ public class ParallelAnimation implements Animatable {
     }
 
     @Override
-    public void update(float deltaTime) {
+    public void update(long deltaNanos) {
         for (var animation : this.animations) {
             if (!animation.isFinished()) {
-                animation.update(deltaTime);
+                animation.update(deltaNanos);
             }
         }
     }

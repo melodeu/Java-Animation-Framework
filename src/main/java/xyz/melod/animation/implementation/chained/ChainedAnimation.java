@@ -9,7 +9,6 @@
 package xyz.melod.animation.implementation.chained;
 
 import xyz.melod.animation.Animatable;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -27,7 +26,7 @@ public class ChainedAnimation implements Animatable {
     }
 
     @Override
-    public void update(float deltaTime) {
+    public void update(long deltaNanos) {
         if (isFinished()) {
             return;
         }
@@ -35,7 +34,7 @@ public class ChainedAnimation implements Animatable {
         var currentAnimation = this.animations.peek();
 
         if (currentAnimation != null) {
-            currentAnimation.update(deltaTime);
+            currentAnimation.update(deltaNanos);
             if (currentAnimation.isFinished()) {
                 this.animations.poll();
             }

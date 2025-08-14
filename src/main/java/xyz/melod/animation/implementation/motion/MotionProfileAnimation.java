@@ -18,22 +18,24 @@ public class MotionProfileAnimation extends Animation<MotionProfileAnimation> {
     private final float endValue;
     private final MotionProfile profile;
     private boolean isReversed = false;
+    private final long totalDurationNanos;
 
     public MotionProfileAnimation(Consumer<Float> target, float startValue, float endValue, float maxVelocity, float maxAcceleration) {
         this.target = target;
         this.startValue = startValue;
         this.endValue = endValue;
         this.profile = new MotionProfile(Math.abs(endValue - startValue), maxVelocity, maxAcceleration);
+        this.totalDurationNanos = (long) (this.profile.getTotalDuration() * 1_000_000_000L);
         this.target.accept(startValue);
     }
 
     @Override
-    protected void doUpdate(float timeSinceDelayed) {
-        float totalDuration = this.profile.getTotalDuration();
-        float progressTime = Math.min(timeSinceDelayed, totalDuration);
+    protected void doUpdate(long timeSinceDelayedNanos) {
+        float timeInSeconds = timeSinceDelayedNanos / 1_000_000_000.0f;
+        float progressTime = Math.min(timeInSeconds, profile.getTotalDuration());
 
         if (this.isReversed) {
-            progressTime = totalDuration - progressTime;
+            progressTime = profile.getTotalDuration() - progressTime;
         }
 
         var positionDelta = this.profile.getPosition(progressTime);
@@ -44,12 +46,12 @@ public class MotionProfileAnimation extends Animation<MotionProfileAnimation> {
     @Override
     public boolean isFinished() {
         if (finished) return true;
-        return elapsedTime - delay >= profile.getTotalDuration();
+        return elapsedNanos - delayNanos >= totalDurationNanos;
     }
 
     @Override
     protected void resetForRepeat() {
-        this.elapsedTime = 0;
+        super.resetForRepeat();
         if (this.yoyo) {
             this.isReversed = !this.isReversed;
         }

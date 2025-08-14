@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unused")
 public class AnimationTracker {
     private final Set<Animatable> animations = ConcurrentHashMap.newKeySet();
-    private static final float UPDATE_RATE = 1.0f / 60.0f;
-    private float accumulator = 0.0f;
+    private static final long UPDATE_INTERVAL_NANOS = 1_000_000_000L / 60;
+    private long accumulatorNanos = 0L;
     private long lastFrameTime;
 
     public AnimationTracker() {
@@ -33,32 +33,32 @@ public class AnimationTracker {
 
     public void clear() {
         this.animations.clear();
-        this.accumulator = 0f;
+        this.accumulatorNanos = 0L;
     }
 
     public void update() {
         var now = System.nanoTime();
-        var realDeltaTime = (now - this.lastFrameTime) / 1_000_000_000.0f;
+        var realDeltaNanos = now - this.lastFrameTime;
         this.lastFrameTime = now;
-        this.accumulator += realDeltaTime;
+        this.accumulatorNanos += realDeltaNanos;
 
         if (this.animations.isEmpty()) {
-            this.accumulator = 0;
+            this.accumulatorNanos = 0;
             return;
         }
 
         final int maxSteps = 5;
         int steps = 0;
 
-        while (this.accumulator >= UPDATE_RATE && steps < maxSteps) {
+        while (this.accumulatorNanos >= UPDATE_INTERVAL_NANOS && steps < maxSteps) {
             for (var animatable : new HashSet<>(this.animations)) {
                 if (animatable.isFinished()) {
                     this.animations.remove(animatable);
                 } else {
-                    animatable.update(UPDATE_RATE);
+                    animatable.update(UPDATE_INTERVAL_NANOS);
                 }
             }
-            this.accumulator -= UPDATE_RATE;
+            this.accumulatorNanos -= UPDATE_INTERVAL_NANOS;
             steps++;
         }
     }

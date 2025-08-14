@@ -14,6 +14,7 @@ import xyz.melod.animation.implementation.spring.Spring;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.Duration;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
@@ -27,7 +28,7 @@ public class Start {
         frame.add(panel);
         frame.setLocationRelativeTo(null);
         
-        var moveX = Animator.tweenFloat(panel::setRectX, 100f, 700f, 2.5f)
+        var moveX = Animator.tweenFloat(panel::setRectX, 100f, 700f, Duration.ofSeconds(2))
             .ease(EasingType.SINE_IN_OUT)
             .yoyo(true)
             .repeatForever();
@@ -35,18 +36,18 @@ public class Start {
         var moveY = Animator.motionProfile(panel::setRectY, 100f, 500f, 400f, 250f)
             .yoyo(true)
             .repeatForever();
-            
-        NavigableMap<Float, Float> rotationKeyframes = new TreeMap<>();
 
-        rotationKeyframes.put(0.0f, 0f);
-        rotationKeyframes.put(1.0f, -90f);
-        rotationKeyframes.put(2.0f, 180f);
-        rotationKeyframes.put(3.0f, 360f);
-        
+        NavigableMap<Duration, Float> rotationKeyframes = new TreeMap<>();
+
+        rotationKeyframes.put(Duration.ofSeconds(0), 0f);
+        rotationKeyframes.put(Duration.ofSeconds(1), -90f);
+        rotationKeyframes.put(Duration.ofSeconds(2), 180f);
+        rotationKeyframes.put(Duration.ofSeconds(3), 360f);
+
         var rotate = Animator.keyframe(panel::setRectRotation, rotationKeyframes)
-            .ease(EasingType.CUBIC_IN_OUT)
-            .yoyo(true)
-            .repeatForever();
+                .ease(EasingType.CUBIC_IN_OUT)
+                .yoyo(true)
+                .repeatForever();
 
         Spring springSize = Animator.spring(panel::setRectSize, panel.getRectSize(), 20, 5);
         springSize.start();
@@ -58,7 +59,7 @@ public class Start {
             }
         });
 
-        var masterAnimation = Animator.delay(1.0f)
+        var masterAnimation = Animator.delay(Duration.ofSeconds(1))
                 .then(moveX.alongWith(moveY).alongWith(rotate));
         
         masterAnimation.start();

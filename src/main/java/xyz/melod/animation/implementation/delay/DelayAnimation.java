@@ -9,24 +9,25 @@
 package xyz.melod.animation.implementation.delay;
 
 import xyz.melod.animation.Animatable;
+import java.time.Duration;
 
 @SuppressWarnings("unused")
 public class DelayAnimation implements Animatable {
-    private float duration;
-    
-    public DelayAnimation(float seconds) {
-        this.duration = seconds;
+    private long durationNanos;
+
+    public DelayAnimation(Duration duration) {
+        this.durationNanos = duration.toNanos();
     }
 
     @Override
-    public void update(float deltaTime) {
-        if (this.duration > 0) {
-            this.duration -= deltaTime;
+    public void update(long deltaNanos) {
+        if (this.durationNanos > 0) {
+            this.durationNanos -= deltaNanos;
         }
     }
 
     @Override
     public boolean isFinished() {
-        return this.duration <= 0;
+        return this.durationNanos <= 0;
     }
 }
