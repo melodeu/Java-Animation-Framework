@@ -23,8 +23,6 @@ import java.util.function.Consumer;
 public final class Animator {
     private static final AnimationTracker tracker = new AnimationTracker();
 
-    private Animator() {}
-
     public static AnimationTracker getTracker() {
         return tracker;
     }
@@ -58,11 +56,22 @@ public final class Animator {
     }
 
     public static ParallelAnimation stagger(float offsetSeconds, Animatable... animations) {
+        if (offsetSeconds <= 0) {
+            return new ParallelAnimation(animations);
+        }
+
+        Animatable[] staggeredAnimations = new Animatable[animations.length];
+
         for (int i = 0; i < animations.length; i++) {
-            if (animations[i] instanceof Animation) {
-                ((Animation<?>) animations[i]).delay(i * offsetSeconds);
+            float staggerDelay = i * offsetSeconds;
+
+            if (staggerDelay > 0) {
+                staggeredAnimations[i] = new DelayAnimation(staggerDelay).then(animations[i]);
+            } else {
+                staggeredAnimations[i] = animations[i];
             }
         }
-        return new ParallelAnimation(animations);
+
+        return new ParallelAnimation(staggeredAnimations);
     }
 }
