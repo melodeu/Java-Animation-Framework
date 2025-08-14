@@ -29,15 +29,17 @@ public abstract class Animation<T extends Animation<T>> implements Animatable {
     public final void update(float deltaTime) {
         if (finished) return;
 
+        elapsedTime += deltaTime;
+
+        if (!started && elapsedTime < delay) {
+            return;
+        }
+
         if (!started) {
             fireOnStart();
             started = true;
         }
 
-        elapsedTime += deltaTime;
-
-        if (elapsedTime < delay) return;
-        
         doUpdate(elapsedTime - delay);
         fireOnUpdate();
 
