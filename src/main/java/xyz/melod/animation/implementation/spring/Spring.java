@@ -17,8 +17,8 @@ public class Spring extends Animation<Spring> {
     private float value;
     private float targetValue;
     private float velocity;
-    private final float stiffness;
-    private final float damping;
+    private float stiffness;
+    private float damping;
     private static final float TOLERANCE = 0.001f;
     private float lastTime = 0f;
 
@@ -33,6 +33,14 @@ public class Spring extends Animation<Spring> {
     public void setTarget(float target) {
         this.targetValue = target;
         this.finished = false;
+    }
+
+    public void setStiffness(float stiffness) {
+        this.stiffness = stiffness;
+    }
+
+    public void setDamping(float damping) {
+        this.damping = damping;
     }
 
     @Override
