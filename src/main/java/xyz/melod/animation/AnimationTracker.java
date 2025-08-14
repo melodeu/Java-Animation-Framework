@@ -10,11 +10,11 @@ package xyz.melod.animation;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public class AnimationTracker {
-    private final Set<Animatable> animations = new HashSet<>();
-    private final Set<Animatable> animationsToRemove = new HashSet<>();
+    private final Set<Animatable> animations = ConcurrentHashMap.newKeySet();
     private static final float UPDATE_RATE = 1.0f / 60.0f;
     private float accumulator = 0.0f;
     private long lastFrameTime;
@@ -29,6 +29,11 @@ public class AnimationTracker {
 
     public void remove(Animatable animatable) {
         this.animations.remove(animatable);
+    }
+
+    public void clear() {
+        this.animations.clear();
+        this.accumulator = 0f;
     }
 
     public void update() {
@@ -46,20 +51,13 @@ public class AnimationTracker {
         int steps = 0;
 
         while (this.accumulator >= UPDATE_RATE && steps < maxSteps) {
-            for (var animatable : this.animations) {
-                if (!animatable.isFinished()) {
+            for (var animatable : new HashSet<>(this.animations)) {
+                if (animatable.isFinished()) {
+                    this.animations.remove(animatable);
+                } else {
                     animatable.update(UPDATE_RATE);
                 }
-                if (animatable.isFinished()) {
-                    animationsToRemove.add(animatable);
-                }
             }
-
-            if (!animationsToRemove.isEmpty()) {
-                this.animations.removeAll(animationsToRemove);
-                animationsToRemove.clear();
-            }
-
             this.accumulator -= UPDATE_RATE;
             steps++;
         }
