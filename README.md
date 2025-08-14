@@ -5,7 +5,6 @@ This document provides a guide to the animation framework, its features, and API
 ---
 
 **Note:** This library was made for **Java 21**.
-
 **Note:** This library requires the following dependency:
 ```xml
 <dependency>
@@ -108,7 +107,7 @@ The first argument is always a `Consumer` or method reference that acts as the t
 **Example:** Animate an object's X-position from `0` to `500` pixels over `1.5` seconds.
 ```java
 // Assumes 'myGameObject' has a 'setX(float x)' method.
-Animator.tweenFloat(myGameObject::setX, 0f, 500f, 1.5f)
+Animator.tweenFloat(myGameObject::setX, 0f, 500f, Duration.ofMillis(1500))
     .ease(EasingType.CUBIC_OUT) // Apply an easing function for non-linear motion.
     .start();                  // Register the animation with the tracker to begin.
 ```
@@ -123,7 +122,7 @@ It interpolates a value between a start and end point over a specified duration.
 
 **Signature:**
 ```java
-Animator.tweenFloat(Consumer<Float> target, float from, float to, float duration)
+Animator.tweenFloat(Consumer<Float> target, float from, float to, Duration duration)
 ```
 
 ### 4.2. Spring: Physics-based Motion
@@ -161,7 +160,7 @@ The animation proceeds by interpolating between each successive keyframe.
 
 **Signature:**
 ```java
-Animator.keyframe(Consumer<Float> target, NavigableMap<Float, Float> keyframes)
+Animator.keyframe(Consumer<Float> target, NavigableMap<Duration, Float> keyframes)
 ```
 
 ### 4.4. MotionProfileAnimation: Physically Plausible Movement
@@ -193,9 +192,9 @@ These methods allow you to inject custom logic at specific points in an animatio
 
 **Example:** Fade in a button, wait, and then pulse it forever.
 ```java
-Animator.tweenFloat(button::setAlpha, 0f, 1f, 0.5f)
+Animator.tweenFloat(button::setAlpha, 0f, 1f, Duration.ofMillis(500))
     .onComplete(() -> {
-        Animator.tweenFloat(button::setScale, 1f, 1.1f, 0.3f)
+        Animator.tweenFloat(button::setScale, 1f, 1.1f, Duration.ofMillis(300))
             .yoyo(true)
             .repeatForever()
             .start();
@@ -212,8 +211,8 @@ It implicitly creates a `ChainedAnimation` sequence.
 
 **Example: Move right, then scale up.**
 ```java
-Animator.tweenFloat(obj::setX, 0, 100, 1f)
-    .then(Animator.tweenFloat(obj::setScale, 1f, 1.5f, 0.5f))
+Animator.tweenFloat(obj::setX, 0, 100, Duration.ofSeconds(1))
+    .then(Animator.tweenFloat(obj::setScale, 1f, 1.5f, Duration.ofMillis(500)))
     .start();
 ```
 
@@ -223,8 +222,8 @@ It implicitly creates a `ParallelAnimation` group.
 
 **Example: Move right and fade out at the same time.**
 ```java
-Animator.tweenFloat(obj::setX, 0, 100, 1f)
-    .alongWith(Animator.tweenFloat(obj::setAlpha, 1f, 0f, 1f))
+Animator.tweenFloat(obj::setX, 0, 100, Duration.ofSeconds(1))
+    .alongWith(Animator.tweenFloat(obj::setAlpha, 1f, 0f, Duration.ofSeconds(1)))
     .start();
 ```
 
@@ -234,10 +233,10 @@ but applies an incremental delay to each subsequent animation.
 
 **Example: Animate a list of items into view with a cascading effect.**
 ```java
-Animator.stagger(0.05f, // 50ms delay between each animation
-    Animator.tweenFloat(item1::setAlpha, 0, 1, 0.4f),
-    Animator.tweenFloat(item2::setAlpha, 0, 1, 0.4f),
-    Animator.tweenFloat(item3::setAlpha, 0, 1, 0.4f)
+Animator.stagger(Duration.ofMillis(50), // 50ms delay between each animation
+    Animator.tweenFloat(item1::setAlpha, 0, 1, Duration.ofMillis(400)),
+    Animator.tweenFloat(item2::setAlpha, 0, 1, Duration.ofMillis(400)),
+    Animator.tweenFloat(item3::setAlpha, 0, 1, Duration.ofMillis(400))
 ).start();
 ```
 
@@ -262,7 +261,7 @@ TypeInterpolator<Vector2D> vectorInterpolator = (start, end, progress) -> {
 Vector2D startPosition = new Vector2D(0, 0);
 Vector2D endPosition = new Vector2D(100, 200);
 
-Animator.tween(myObject::setPosition, vectorInterpolator, startPosition, endPosition, 1.0f)
+Animator.tween(myObject::setPosition, vectorInterpolator, startPosition, endPosition, Duration.ofSeconds(1))
     .start();
 ```
 
@@ -278,7 +277,7 @@ Apply an easing function via the `.ease()` method. The `EasingType` enum provide
 - **`stagger(...)`**: Composition utility for creating cascade effects.  
 
 ### Animation<T> Methods
-- **`delay(float)`**: Pre-animation wait time.  
+- **`delay(Duration)`**: Pre-animation wait time.  
 - **`repeat(int)`**: Loop execution.  
 - **`yoyo(boolean)`**: Reverse direction on alternate repeat cycles.  
 - **`onStart(Runnable)`, `onComplete(Runnable)`, etc.**: Lifecycle event hooks.  
@@ -290,3 +289,48 @@ Apply an easing function via the `.ease()` method. The `EasingType` enum provide
 
 ### Spring Specifics
 - **`setTarget(float)`**: Updates the spring's goal, triggering motion.
+
+## 9. Troubleshooting / FAQ
+
+### "My animation isn't starting!"
+1.  Did you call `.start()` on the animation?
+2.  Is `Animator.update()` being called once per frame in your main application loop?
+
+---
+
+### "My spring animation is too bouncy/slow."
+Your animation is controlled by physics. Try increasing the `damping` value to reduce bounciness or increasing the `stiffness` value to make it react faster.
+
+---
+
+### "My animation seems to stutter or jump."
+The animator is designed to catch up if your main application loop lags. Ensure that other logic in your main loop isn't causing significant frame rate drops.
+
+---
+
+## 10. "Best Practices" or "Common Patterns"
+
+### Stateful vs. Fire-and-Forget
+It's helpful to understand the nature of different animations to use them effectively.
+
+* **Stateful Animations (`Spring`)**: A `Spring` is best used for dynamic, interruptible motion. You should create it **once** and keep it alive, changing its goal by calling `.setTarget()`. It's perfect for UI elements that need to react continuously to user input, like a card that follows the mouse.
+
+* **Fire-and-Forget Animations (`Tween`)**: A `Tween` is typically used for a single, uninterruptible sequence. You create it, run it, and then let it be garbage collected. This is ideal for one-off effects like fading an item in or out.
+
+---
+
+### Reusing Animations
+
+Creating a new animation object for every event (like a button click) is inefficient. A better pattern is to create the animation once during your object's initialization and simply call `.start()` on the existing instance whenever you need to trigger it.
+
+```java
+// Create the animation once during initialization
+var buttonPulse = Animator.tweenFloat(button::setScale, 1f, 1.1f, Duration.ofMillis(100))
+    .yoyo(true);
+
+// Trigger it from an event handler
+public void onButtonClick() {
+    // This simply restarts the existing animation, creating no new objects.
+    buttonPulse.start();
+}
+```
