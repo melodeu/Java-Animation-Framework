@@ -60,18 +60,18 @@ public final class Animator {
             return new ParallelAnimation(animations);
         }
 
-        Animatable[] staggeredAnimations = new Animatable[animations.length];
-
         for (int i = 0; i < animations.length; i++) {
             float staggerDelay = i * offsetSeconds;
+            if (staggerDelay <= 0) continue;
 
-            if (staggerDelay > 0) {
-                staggeredAnimations[i] = new DelayAnimation(staggerDelay).then(animations[i]);
+            Animatable anim = animations[i];
+            if (anim instanceof Animation) {
+                ((Animation<?>) anim).delay(staggerDelay);
             } else {
-                staggeredAnimations[i] = animations[i];
+                animations[i] = new DelayAnimation(staggerDelay).then(anim);
             }
         }
 
-        return new ParallelAnimation(staggeredAnimations);
+        return new ParallelAnimation(animations);
     }
 }
